@@ -12,3 +12,7 @@ defaultTheme = 'light'
   name = "Posts"
   url = "/posts/"
   weight = 1
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'

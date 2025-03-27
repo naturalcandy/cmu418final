@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on GPU-Accelerated GraphBLAS</title>
+    <link>http://localhost:1313/cmu418final/posts/</link>
+    <description>Recent content in Posts on GPU-Accelerated GraphBLAS</description>
+    <generator>Hugo -- 0.145.0</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 26 Mar 2025 20:20:46 -0400</lastBuildDate>
+    <atom:link href="http://localhost:1313/cmu418final/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project Proposal</title>
+      <link>http://localhost:1313/cmu418final/posts/project_proposal/</link>
+      <pubDate>Wed, 26 Mar 2025 20:20:46 -0400</pubDate>
+      <guid>http://localhost:1313/cmu418final/posts/project_proposal/</guid>
+      <description>&lt;p&gt;An overview of our 15-418 Final Project&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

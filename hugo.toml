@@ -1,0 +1,14 @@
+baseURL = "https://naturalcandy.github.io/cmu418final/"
+languageCode = 'en-us'
+title = 'GPU-Accelerated GraphBLAS'
+theme = 'PaperMod'
+
+[params]
+defaultTheme = 'light'
+
+[menu]
+[[menu.main]]
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts/"
+  weight = 1

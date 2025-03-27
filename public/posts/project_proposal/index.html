@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/cmu418final/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=cmu418final/livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Project Proposal | GPU-Accelerated GraphBLAS</title>
+<meta name="keywords" content="">
+<meta name="description" content="An overview of our 15-418 Final Project">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/cmu418final/posts/project_proposal/">
+<link crossorigin="anonymous" href="/cmu418final/assets/css/stylesheet.f49d66caae9ea0fd43f21f29e71a8d3e284517ed770f2aa86fa012953ad3c9ef.css" integrity="sha256-9J1myq6eoP1D8h8p5xqNPihFF&#43;13Dyqob6ASlTrTye8=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/cmu418final/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/cmu418final/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/cmu418final/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/cmu418final/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/cmu418final/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/cmu418final/posts/project_proposal/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/cmu418final/" accesskey="h" title="GPU-Accelerated GraphBLAS (Alt + H)">GPU-Accelerated GraphBLAS</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/cmu418final/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Project Proposal
+    </h1>
+    <div class="post-meta"><span title='2025-03-26 20:20:46 -0400 EDT'>March 26, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>An overview of our 15-418 Final Project</p>
+<h1 id="gpu-accelerated-graphblas">GPU-Accelerated GraphBLAS<a hidden class="anchor" aria-hidden="true" href="#gpu-accelerated-graphblas">#</a></h1>
+<h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<p>We will implement a GPU-accelerated subset of the GraphBLAS standard to express graph algorithms using sparse matrix operations over various semirings. Our implementation will optimize critical matrix operations (particularly SpMV and SpMM) on NVIDIA GPUs through custom GPU kernels. The key focus areas include effectively handling irregular workloads inherent to graph processing and reducing kernel launch overhead common in iterative graph algorithms by staging computations within a single main GPU loop kernel.</p>
+<h2 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h2>
+<p>Traditional graph algorithms such as  Breadth-First Search (BFS), Single-Source Shortest Path (SSSP), and PageRank are typically implemented using node and edge-centric approaches, making them intuitive but increasingly complex to parallelize as algorithms grow more complex. The GraphBLAS standard offers an alternative perspective, representing graph algorithms via sparse linear algebra operations over semirings. This linear algebraic approach leverages established mathematical structures to simplify algorithm design, which can be especially useful in parallel computing contexts.
+Graphs encountered in practice typically end up sparse, mainly because real-world interactions themselves are usually limited and selective. GraphBLAS focuses on interpreting graphs as sparse matrices, enabling the use of their CPU optimized matrix operations like Sparse Matrix-Vector Multiplication (SpMV) and Sparse Matrix-Matrix Multiplication (SpMM).  Semirings (algebraic structures that redefine how matrix operations combine values) further enhance flexibility, allowing us to have tailored operations suited to diverse algorithmic needs, such as logical OR-AND for graph connectivity problems or MIN-PLUS for shortest-path calculations. Our motivation to explore a GPU-accelerated framework stems from the fact that matrix operations naturally align with GPU architectures, which excel at executing uniform instructions in parallel over large datasets. That being said, adopting GPUs for sparse graph processing introduces many challenges due to irregular memory access patterns and work distribution. So the focus of our project will be on finding effective ways to overcome these challenges [might add more later]..</p>
+<h2 id="the-challenge">The Challenge<a hidden class="anchor" aria-hidden="true" href="#the-challenge">#</a></h2>
+<h3 id="irregular-memory-access-patterns">Irregular Memory Access Patterns:<a hidden class="anchor" aria-hidden="true" href="#irregular-memory-access-patterns">#</a></h3>
+<ul>
+<li>
+<p>Graph data is inherently sparse and irregular, leading to unpredictable memory access patterns that can reduce GPU performance.</p>
+</li>
+<li>
+<p>When performing sparse matrix operations, threads accessing neighboring vertices may need to fetch data from widely separated memory locations, leading to uncoalesced memory accesses. Additionally matrix vector multiplication is memory bound, not computation bound.</p>
+</li>
+</ul>
+<h3 id="workload-imbalance">Workload Imbalance:<a hidden class="anchor" aria-hidden="true" href="#workload-imbalance">#</a></h3>
+<ul>
+<li>
+<p>Real-world graphs often have “hot-spots” creating extreme imbalances in workload distribution.</p>
+</li>
+<li>
+<p>High-degree vertices require significantly more computation than low-degree vertices, leading to thread divergence and workload imbalance.
+We must come up with our own custom work distribution strategy that will maximize hardware utilization.</p>
+</li>
+</ul>
+<h3 id="kernel-launch-overhead">Kernel Launch Overhead:<a hidden class="anchor" aria-hidden="true" href="#kernel-launch-overhead">#</a></h3>
+<ul>
+<li>
+<p>Graph algorithms are typically iterative. This typically means requiring multiple kernel launches on GPUs.</p>
+</li>
+<li>
+<p>Each kernel launch introduces overhead that can dominate execution time, especially for high-diameter graphs that require many iterations.</p>
+</li>
+</ul>
+<h3 id="dynamic-frontier">Dynamic Frontier:<a hidden class="anchor" aria-hidden="true" href="#dynamic-frontier">#</a></h3>
+<ul>
+<li>
+<p>During algorithm execution, the frontier can change dramatically in density.</p>
+</li>
+<li>
+<p>We must change our processing strategy depending on the density of our frontier (e.g., sparse frontiers benefit from push-based approaches while dense frontiers benefit from pull-based approaches).</p>
+</li>
+</ul>
+<h3 id="debugging">Debugging<a hidden class="anchor" aria-hidden="true" href="#debugging">#</a></h3>
+<ul>
+<li>It is hard to validate correctness of graph algorithms on large graphs so we may need to debug on smaller test cases or come up with some new way of validating our implementation.</li>
+</ul>
+<h2 id="resources">Resources<a hidden class="anchor" aria-hidden="true" href="#resources">#</a></h2>
+<h3 id="hardware">Hardware<a hidden class="anchor" aria-hidden="true" href="#hardware">#</a></h3>
+<p>We are expecting to develop on NVIDIA GPUs (RTX 2080 Ti or newer). We do not require any extra resources beyond what is already available to us. That being said, access to higher-end NVIDIA GPUs with more memory would be appreciated for testing larger graphs, but it is not strictly necessary for our core implementation/proof of concept.</p>
+<h3 id="software-and-libraries">Software and Libraries<a hidden class="anchor" aria-hidden="true" href="#software-and-libraries">#</a></h3>
+<p>We will be using the CUDA Toolkit for GPU programming and the cuSPARSE library as a baseline for sparse matrix operations</p>
+<h3 id="starting-point">Starting Point<a hidden class="anchor" aria-hidden="true" href="#starting-point">#</a></h3>
+<p>We will be starting from scratch.</p>
+<h3 id="key-references">Key References:<a hidden class="anchor" aria-hidden="true" href="#key-references">#</a></h3>
+<ul>
+<li>
+<p>Kepner, J., Aaltonen, P., Bader, D., Buluç, A., Franchetti, F., Gilbert, J., Hutchison, D., Kumar, M., Lumsdaine, A., Meyerhenke, H., McMillan, S., Moreira, J., Owens, J. D., Yang, C., Zalewski, M., &amp; Mattson, T. (2016). Mathematical foundations of the GraphBLAS. arXiv preprint arXiv:1606.05790. <a href="https://doi.org/10.48550/arXiv.1606.05790">https://doi.org/10.48550/arXiv.1606.05790</a></p>
+</li>
+<li>
+<p>Yang, C., Buluç, A., &amp; Owens, J. D. (2018). Implementing push-pull efficiently in GraphBLAS. Proceedings of the International Conference on Parallel Processing (ICPP).</p>
+</li>
+<li>
+<p>Yang, C., Buluç, A., &amp; Owens, J. D. (2019). GraphBLAST: A high-performance linear algebra-based graph framework on the GPU. arXiv preprint arXiv:1908.01407.</p>
+</li>
+<li>
+<p>The GraphBLAS User Guide &amp; C API Specification (<a href="https://github.com/DrTimothyAldenDavis/GraphBLAS/blob/stable/Doc/GraphBLAS_UserGuide.pdf">https://github.com/DrTimothyAldenDavis/GraphBLAS/blob/stable/Doc/GraphBLAS_UserGuide.pdf</a>)</p>
+</li>
+<li>
+<p>Hwang, C., Park, K., Shu, R., Qu, X., Cheng, P., &amp; Xiong, Y. (2023). ARK: GPU-driven code execution for distributed deep learning. In Proceedings of the 20th USENIX Symposium on Networked Systems Design and Implementation (NSDI). USENIX Association.</p>
+</li>
+</ul>
+<h2 id="goals-and-deliverables">Goals and Deliverables<a hidden class="anchor" aria-hidden="true" href="#goals-and-deliverables">#</a></h2>
+<h3 id="plan-to-achieve">Plan to Achieve<a hidden class="anchor" aria-hidden="true" href="#plan-to-achieve">#</a></h3>
+<h4 id="core-graphblas-operations-on-gpu">Core GraphBLAS Operations on GPU:<a hidden class="anchor" aria-hidden="true" href="#core-graphblas-operations-on-gpu">#</a></h4>
+<ul>
+<li>
+<p>Implement SpMV and SpMM operations with support for different semirings</p>
+</li>
+<li>
+<p>Support for element-wise operations (EWiseAdd, EWiseMult)</p>
+</li>
+<li>
+<p>Implement basic masking functionality for selective updates</p>
+</li>
+</ul>
+<h4 id="algorithm-implementations">Algorithm Implementations:<a hidden class="anchor" aria-hidden="true" href="#algorithm-implementations">#</a></h4>
+<ul>
+<li>Implement and validate at least two graph algorithms (e.g. BFS &amp; PageRank) using our framework.</li>
+</ul>
+<h4 id="performance-optimizations">Performance Optimizations:<a hidden class="anchor" aria-hidden="true" href="#performance-optimizations">#</a></h4>
+<ul>
+<li>
+<p>Adaptive kernel implementation that stays on the GPU across multiple iterations.</p>
+</li>
+<li>
+<p>Dynamic switching between push and pull approaches based on frontier density.</p>
+</li>
+<li>
+<p>Load balancing strategies for handling irregular workloads.</p>
+</li>
+<li>
+<p>Memory-efficient representations of sparse matrices.</p>
+</li>
+</ul>
+<h4 id="benchmarking-and-analysis">Benchmarking and Analysis:<a hidden class="anchor" aria-hidden="true" href="#benchmarking-and-analysis">#</a></h4>
+<ul>
+<li>
+<p>Detailed performance comparison against CPU-BLAS kernels.</p>
+</li>
+<li>
+<p>Analysis of execution characteristics on different graph types (scale-free vs. random).</p>
+</li>
+<li>
+<p>Identification of performance bottlenecks and optimization opportunities</p>
+</li>
+<li>
+<p>Measurement of speedup relative to our previous approaches</p>
+</li>
+</ul>
+<h4 id="documentation">Documentation<a hidden class="anchor" aria-hidden="true" href="#documentation">#</a></h4>
+<ul>
+<li>
+<p>Clear documentation of our implementation approach and design choices.</p>
+</li>
+<li>
+<p>We also expect to have a clear and easy to understand API.</p>
+</li>
+</ul>
+<h3 id="hope-to-achieve">Hope to Achieve<a hidden class="anchor" aria-hidden="true" href="#hope-to-achieve">#</a></h3>
+<h3 id="additional-algorithms">Additional Algorithms<a hidden class="anchor" aria-hidden="true" href="#additional-algorithms">#</a></h3>
+<ul>
+<li>Single-Source Shortest Path (SSSP) implementation using min-plus semiring</li>
+</ul>
+<h3 id="extended-evaluation">Extended Evaluation<a hidden class="anchor" aria-hidden="true" href="#extended-evaluation">#</a></h3>
+<ul>
+<li>Comparison against more specialized GPU graph frameworks like Gunrock</li>
+</ul>
+<h2 id="platform-choice">PLATFORM CHOICE<a hidden class="anchor" aria-hidden="true" href="#platform-choice">#</a></h2>
+<p>We are implementing our project as a C++ library with CUDA kernels. We want to use CUDA&rsquo;s mature ecosystem which includes libraries like cuSPARSE as building blocks. Additionally we already have access and experience with CUDA devices.</p>
+<h2 id="schedule">SCHEDULE<a hidden class="anchor" aria-hidden="true" href="#schedule">#</a></h2>
+<h3 id="week-1-march-26---march-29">Week 1 (March 26 - March 29)<a hidden class="anchor" aria-hidden="true" href="#week-1-march-26---march-29">#</a></h3>
+<ul>
+<li>
+<p>Set up project repo and dependencies</p>
+</li>
+<li>
+<p>Review GraphBLAS specification and existing implementations</p>
+</li>
+<li>
+<p>Design data structures for sparse matrix representations</p>
+</li>
+</ul>
+<h3 id="week-2-march-30---april-5">Week 2 (March 30 - April 5)<a hidden class="anchor" aria-hidden="true" href="#week-2-march-30---april-5">#</a></h3>
+<ul>
+<li>
+<p>Implement core sparse matrix kernels with basic semiring/masking support.</p>
+</li>
+<li>
+<p>Add tests for correctness against cuSPARSE kernels</p>
+</li>
+<li>
+<p>Create performance benchmarking infrastructure</p>
+</li>
+<li>
+<p>Establish baseline measurements with serial CPU implementation</p>
+</li>
+</ul>
+<h3 id="week-3-april-6---april-12">Week 3 (April 6 - April 12)<a hidden class="anchor" aria-hidden="true" href="#week-3-april-6---april-12">#</a></h3>
+<ul>
+<li>
+<p>Implement our main loop kernel/staged execution.</p>
+</li>
+<li>
+<p>Optimize SpMV implementation with thread coarsening and load balancing</p>
+</li>
+<li>
+<p>Implement frontier-based optimizations (push vs. pull strategies)</p>
+</li>
+<li>
+<p>Complete BFS implementation with all optimizations</p>
+</li>
+<li>
+<p>Begin implementation of PageRank algorithm</p>
+</li>
+<li>
+<p>Perform preliminary performance analysis</p>
+</li>
+<li>
+<p>Prepare milestone report (due April 15)</p>
+</li>
+</ul>
+<h3 id="week-4-april-13---april-19">Week 4 (April 13 - April 19)<a hidden class="anchor" aria-hidden="true" href="#week-4-april-13---april-19">#</a></h3>
+<ul>
+<li>
+<p>Complete PageRank implementation with iterative convergence</p>
+</li>
+<li>
+<p>Profile to determine the best method in optimizing memory usage and access patterns along with load balancing.</p>
+</li>
+<li>
+<p>Expand testing to larger and more diverse graph datasets</p>
+</li>
+<li>
+<p>Complete Milestone Report (Due April 15th)</p>
+</li>
+</ul>
+<h3 id="week-5-april-20---april-26">Week 5 (April 20 - April 26)<a hidden class="anchor" aria-hidden="true" href="#week-5-april-20---april-26">#</a></h3>
+<ul>
+<li>
+<p>Conduct detailed performance analysis and comparison with previous implementations as well as CPU baseline.</p>
+</li>
+<li>
+<p>Optimize remaining performance bottlenecks</p>
+</li>
+<li>
+<p>Prepare final report and documentation</p>
+</li>
+<li>
+<p>Create visualizations for poster presentation</p>
+</li>
+<li>
+<p>Complete any stretch goals if ahead of schedule</p>
+</li>
+</ul>
+<h3 id="final-week-april-27---april-29">Final Week (April 27 - April 29)<a hidden class="anchor" aria-hidden="true" href="#final-week-april-27---april-29">#</a></h3>
+<ul>
+<li>
+<p>Present project at poster session</p>
+</li>
+<li>
+<p>Final submission of code and documentation</p>
+</li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/cmu418final/">GPU-Accelerated GraphBLAS</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

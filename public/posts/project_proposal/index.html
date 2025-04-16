@@ -92,7 +92,7 @@
 <p>We will implement a GPU-accelerated subset of the GraphBLAS standard to express graph algorithms using sparse matrix operations over various semirings. Our implementation will optimize critical matrix operations (particularly SpMV and SpMM) on NVIDIA GPUs through custom GPU kernels. The key focus areas include effectively handling irregular workloads inherent to graph processing and reducing kernel launch overhead common in iterative graph algorithms by staging computations within a single main GPU loop kernel.</p>
 <h2 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h2>
 <p>Traditional graph algorithms such as  Breadth-First Search (BFS), Single-Source Shortest Path (SSSP), and PageRank are typically implemented using node and edge-centric approaches, making them intuitive but increasingly complex to parallelize as algorithms grow more complex. The GraphBLAS standard offers an alternative perspective, representing graph algorithms via sparse linear algebra operations over semirings. This linear algebraic approach leverages established mathematical structures to simplify algorithm design, which can be especially useful in parallel computing contexts.
-Graphs encountered in practice typically end up sparse, mainly because real-world interactions themselves are usually limited and selective. GraphBLAS focuses on interpreting graphs as sparse matrices, enabling the use of their CPU optimized matrix operations like Sparse Matrix-Vector Multiplication (SpMV) and Sparse Matrix-Matrix Multiplication (SpMM).  Semirings (algebraic structures that redefine how matrix operations combine values) further enhance flexibility, allowing us to have tailored operations suited to diverse algorithmic needs, such as logical OR-AND for graph connectivity problems or MIN-PLUS for shortest-path calculations. Our motivation to explore a GPU-accelerated framework stems from the fact that matrix operations naturally align with GPU architectures, which excel at executing uniform instructions in parallel over large datasets. That being said, adopting GPUs for sparse graph processing introduces many challenges due to irregular memory access patterns and work distribution. So the focus of our project will be on finding effective ways to overcome these challenges [might add more later]..</p>
+Graphs encountered in practice typically end up sparse, mainly because real-world interactions themselves are usually limited and selective. GraphBLAS focuses on interpreting graphs as sparse matrices, enabling the use of their CPU optimized matrix operations like Sparse Matrix-Vector Multiplication (SpMV) and Sparse Matrix-Matrix Multiplication (SpMM).  Semirings (algebraic structures that redefine how matrix operations combine values) further enhance flexibility, allowing us to have tailored operations suited to diverse algorithmic needs, such as logical OR-AND for graph connectivity problems or MIN-PLUS for shortest-path calculations. Our motivation to explore a GPU-accelerated framework stems from the fact that matrix operations naturally align with GPU architectures, which excel at executing uniform instructions in parallel over large datasets. That being said, adopting GPUs for sparse graph processing introduces many challenges due to irregular memory access patterns and work distribution. The main focus of our project will be on finding effective strategies in overcoming these challenges.</p>
 <h2 id="the-challenge">The Challenge<a hidden class="anchor" aria-hidden="true" href="#the-challenge">#</a></h2>
 <h3 id="irregular-memory-access-patterns">Irregular Memory Access Patterns:<a hidden class="anchor" aria-hidden="true" href="#irregular-memory-access-patterns">#</a></h3>
 <ul>
@@ -244,7 +244,7 @@ We must come up with our own custom work distribution strategy that will maximiz
 <h3 id="week-2-march-30---april-5">Week 2 (March 30 - April 5)<a hidden class="anchor" aria-hidden="true" href="#week-2-march-30---april-5">#</a></h3>
 <ul>
 <li>
-<p>Implement core sparse matrix kernels with basic semiring/masking support.</p>
+<p>Implement core library kernels (e.g., sparse matrix kernels with semiring/masking support).</p>
 </li>
 <li>
 <p>Add tests for correctness against cuSPARSE kernels</p>
@@ -259,10 +259,10 @@ We must come up with our own custom work distribution strategy that will maximiz
 <h3 id="week-3-april-6---april-12">Week 3 (April 6 - April 12)<a hidden class="anchor" aria-hidden="true" href="#week-3-april-6---april-12">#</a></h3>
 <ul>
 <li>
-<p>Implement our main loop kernel/staged execution.</p>
+<p>Design a long-running GPU kernel that eliminates per-iteration launch overhead for iterative graph algorithms</p>
 </li>
 <li>
-<p>Optimize SpMV implementation with thread coarsening and load balancing</p>
+<p>Optimize our sparse matrix kernels with proper load balancing</p>
 </li>
 <li>
 <p>Implement frontier-based optimizations (push vs. pull strategies)</p>
@@ -274,7 +274,7 @@ We must come up with our own custom work distribution strategy that will maximiz
 <p>Begin implementation of PageRank algorithm</p>
 </li>
 <li>
-<p>Perform preliminary performance analysis</p>
+<p>Perform additional performance analysis after making our optimizations</p>
 </li>
 <li>
 <p>Prepare milestone report (due April 15)</p>
@@ -284,9 +284,6 @@ We must come up with our own custom work distribution strategy that will maximiz
 <ul>
 <li>
 <p>Complete PageRank implementation with iterative convergence</p>
-</li>
-<li>
-<p>Profile to determine the best method in optimizing memory usage and access patterns along with load balancing.</p>
 </li>
 <li>
 <p>Expand testing to larger and more diverse graph datasets</p>

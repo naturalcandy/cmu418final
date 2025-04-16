@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/cmu418final/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=cmu418final/livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Project Milestone Report | GPU-Accelerated GraphBLAS</title>
+<meta name="keywords" content="">
+<meta name="description" content="Our 15-418 Milestone Report">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/cmu418final/posts/project_milestone_report/">
+<link crossorigin="anonymous" href="/cmu418final/assets/css/stylesheet.f49d66caae9ea0fd43f21f29e71a8d3e284517ed770f2aa86fa012953ad3c9ef.css" integrity="sha256-9J1myq6eoP1D8h8p5xqNPihFF&#43;13Dyqob6ASlTrTye8=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/cmu418final/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/cmu418final/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/cmu418final/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/cmu418final/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/cmu418final/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/cmu418final/posts/project_milestone_report/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/cmu418final/" accesskey="h" title="GPU-Accelerated GraphBLAS (Alt + H)">GPU-Accelerated GraphBLAS</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/cmu418final/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Project Milestone Report
+    </h1>
+    <div class="post-meta"><span title='2025-04-15 22:40:54 -0400 EDT'>April 15, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>Our 15-418 Milestone Report</p>
+<h1 id="milestone-report">Milestone Report<a hidden class="anchor" aria-hidden="true" href="#milestone-report">#</a></h1>
+<h2 id="summary-of-progress-so-far">Summary of Progress So Far<a hidden class="anchor" aria-hidden="true" href="#summary-of-progress-so-far">#</a></h2>
+<p>Over the past few weeks, we have made considerable progress toward our objective of building a GPU-accelerated GraphBLAS framework. As of this milestone, we have implemented:</p>
+<ul>
+<li>
+<p>A fully functional API</p>
+</li>
+<li>
+<p>A working kernel sequence staging system and backend JIT compiler:</p>
+<ul>
+<li>Generates and executes fused CUDA kernels based on the scheduled operation graph.</li>
+<li>This is done to eliminate costly per-iteration kernel launches in iterative graph algorithms by staying resident on the GPU</li>
+</ul>
+</li>
+<li>
+<p>Element-wise operations (Add, Sub, Mul, Div) supported on the GPU</p>
+</li>
+<li>
+<p>Memory allocator and buffer tracker supporting multiple data types along with efficient memory alignment</p>
+</li>
+<li>
+<p>CSR format conversion kernel for dense matrix input, complete with correctness testing</p>
+</li>
+<li>
+<p>Row-based parallel CSR SpMV kernel and correctness validation</p>
+</li>
+<li>
+<p>Warp-collaborative CSR SpMV implementation with dynamic thread assignment and shuffle-based reduction</p>
+</li>
+</ul>
+<p>In addition to implementing these components, we conducted performance benchmarking comparing our GPU-accelerated CSR SpMV implementations against a sequential CPU-based approach. From our profiling we were able to see first-hand the memory-bound nature of SpMV. These insights motivate us to explore more efficient parallel execution strategies and additional specialized matrix storage formats that are suited to the irregular memory access patterns characteristic of graph algorithms.</p>
+<h2 id="updated-project-schedule-april-15---april-29">Updated Project Schedule (April 15 - April 29)<a hidden class="anchor" aria-hidden="true" href="#updated-project-schedule-april-15---april-29">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Timeframe</th>
+          <th>Tasks</th>
+          <th>Owner</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Apr 15 - Apr 17</td>
+          <td>Optimize Vector CSR kernel implementations and look into different sparse matrix formats suited for different graph sparsity types.</td>
+          <td>Devi</td>
+      </tr>
+      <tr>
+          <td>Apr 17 - Apr 19</td>
+          <td>Enhance persistent kernel architecture to support dynamic termination conditions (e.g., convergence thresholds) rather than fixed iteration counts for iterative graph algorithms.</td>
+          <td>Noli</td>
+      </tr>
+      <tr>
+          <td>Apr 19 - Apr 21</td>
+          <td>Implement specialized computational kernels for different semiring operations (MIN-PLUS, LOGICAL-OR-AND, etc.) to optimize performance for specific graph algorithms.</td>
+          <td>Noli</td>
+      </tr>
+      <tr>
+          <td>Apr 21 - Apr 22</td>
+          <td>Implement some example graph algorithms (BFS and its variants, PageRank, SSSP) using our framework and verify their correctness.</td>
+          <td>Both</td>
+      </tr>
+      <tr>
+          <td>Apr 22 - Apr 24</td>
+          <td>Implement frontier-based optimizations (push vs. pull strategies).</td>
+          <td>Noli</td>
+      </tr>
+      <tr>
+          <td>Apr 24 - Apr 26</td>
+          <td>Run kernel &amp; framework performance benchmarks, analyze kernel timings, memory bandwidth stats. Compare with existing kernels and frameworks.</td>
+          <td>Devi</td>
+      </tr>
+      <tr>
+          <td>Apr 26 - Apr 27</td>
+          <td>Polish documentation, and write up results obtained from testing.</td>
+          <td>Both</td>
+      </tr>
+      <tr>
+          <td>Apr 27 - Apr 28</td>
+          <td>Visuals, demo setup, final write-up, and submission.</td>
+          <td>Both</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="deliverables-progress-review">Deliverables Progress Review<a hidden class="anchor" aria-hidden="true" href="#deliverables-progress-review">#</a></h2>
+<h3 id="achieved">Achieved<a hidden class="anchor" aria-hidden="true" href="#achieved">#</a></h3>
+<ul>
+<li><strong>Core GraphBLAS Operations on GPU</strong>
+<ul>
+<li>Implement SpMV operations with support for different semirings</li>
+<li>Support for element-wise operations (EWiseAdd, EWiseMult)</li>
+<li>Implement basic masking functionality for selective updates</li>
+<li>Persistent Loop Kernel</li>
+</ul>
+</li>
+<li>Efficient sparse matrix representation</li>
+<li>Matrix to CSR sparse matrix conversion</li>
+</ul>
+<h3 id="in-progress">In Progress<a hidden class="anchor" aria-hidden="true" href="#in-progress">#</a></h3>
+<ul>
+<li>
+<p><strong>Algorithm Implementations using our framework</strong></p>
+<ul>
+<li>Implement BFS (and its variants) &amp; PageRank</li>
+<li>Benchmark against other frameworks</li>
+</ul>
+</li>
+<li>
+<p><strong>Frontier-based optimization</strong></p>
+</li>
+<li>
+<p><strong>Benchmarking &amp; Analysis</strong></p>
+<ul>
+<li>Analysis of execution characteristics on different graph types</li>
+<li>Detailed performance comparison against CPU-BLAS kernels</li>
+</ul>
+</li>
+</ul>
+<h3 id="hope-to-achieve">Hope to Achieve<a hidden class="anchor" aria-hidden="true" href="#hope-to-achieve">#</a></h3>
+<ul>
+<li>Single-Source Shortest Path (SSSP) implementation using min-plus semiring</li>
+<li>Comparison against more specialized GPU graph frameworks like Gunrock</li>
+</ul>
+<h2 id="poster-session-plan">Poster Session Plan<a hidden class="anchor" aria-hidden="true" href="#poster-session-plan">#</a></h2>
+<ul>
+<li>
+<p>Speedup comparison graphs</p>
+<ul>
+<li>Our implementation vs. CPU-BLAS implementation</li>
+<li>Speedup factors across different graph sizes to show scaling behavior</li>
+</ul>
+</li>
+<li>
+<p>Kernel launch overhead reduction</p>
+<ul>
+<li>A graph showing execution time with traditional per-iteration launches vs. our single kernel approach</li>
+<li>A bar graph showing time spent in compute vs. time spent in copying buffers to device and kernel launch overhead</li>
+</ul>
+</li>
+<li>
+<p>A visualization of the operation DAG</p>
+</li>
+<li>
+<p>CUDA profiler description highlighting memory-bound behavior</p>
+</li>
+<li>
+<p>Performance comparisons of our different graph traversal kernels on graphs with different sparsity profiles</p>
+</li>
+</ul>
+<h2 id="current-concerns">Current Concerns<a hidden class="anchor" aria-hidden="true" href="#current-concerns">#</a></h2>
+<p>The biggest concern we have is that sparsity patterns in graphs vary dramatically. This makes our kernel efficiency difficult to generalize; it would be very challenging to optimize for all cases. Currently we are thinking about developing a runtime classification system that could detect the sparsity pattern and switch between our different kernel implementations to maintain performance across different graph structures.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/cmu418final/">GPU-Accelerated GraphBLAS</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
